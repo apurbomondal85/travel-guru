@@ -7,16 +7,16 @@ import googleImg from '../../assets/images/icons/google.png'
 import { AuthContext } from '../../AuthProvider/AuthProvider'
 
 function Login() {
-    const {login} = useContext(AuthContext)
+    const {login, google} = useContext(AuthContext)
     const navigate = useNavigate();
     const location = useLocation();
+    const from = location.state?.form?.pathname || '/';
 
     const handleLogin = (event) =>{
         event.preventDefault();
         const form = event.target;
         const email = form.email.value;
         const password = form.password.value;
-        const from = location.state?.form?.pathname || '/';
         login(email, password)
         .then((userCredential) => {
             // Signed in 
@@ -29,6 +29,15 @@ function Login() {
             const errorMessage = error.message;
             console.log(errorMessage);
           });
+    }
+
+    const handleGoogle = () => {
+        google()
+            .then((result) => {
+                const user = result.user;
+                navigate(from);
+            })
+            .catch(error => console.log(error))
     }
 
 
@@ -66,7 +75,7 @@ function Login() {
                     <p className='text-start m-0'><img src={facImg} alt="faIcon" style={{height:'2rem',width:'2rem'}} /></p>
                     <p className='d-inline m-0 '>Continue With Facebook</p>
                 </Button>
-                <Button className='bg-white text-dark w-100 d-flex align-items-center gap-4 fs-6 fw-semibold rounded-pill mt-3'>
+                <Button onClick={handleGoogle} className='bg-white text-dark w-100 d-flex align-items-center gap-4 fs-6 fw-semibold rounded-pill mt-3'>
                     <p className='text-start m-0'><img src={googleImg} alt="faIcon" style={{height:'2rem',width:'2rem'}} /></p>
                     <p className='d-inline m-0 '>Continue With Google</p>
                 </Button>
